@@ -1,9 +1,15 @@
-body, html {
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.otf') format('opentype');
+}
+
+body {
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100%;
     width: 100%;
+    font-family: 'CustomFont', sans-serif;
 }
 
 #container {
@@ -11,20 +17,115 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: #f0f0f0;
+    filter: blur(5px);
+}
+
+.ball, .player {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid black;
+    animation: moveBall 5s linear;
 }
 
 .ball {
-    position: absolute;
-    border-radius: 50%;
     background-color: red;
-    animation: moveBall 5s linear infinite;
+}
+
+.player {
+    background-color: #BFECFF;
 }
 
 @keyframes moveBall {
     0% {
-        transform: translateY(-100%);
+        transform: translate(0, 0);
     }
     100% {
-        transform: translateY(100vh);
+        transform: translate(var(--endX), var(--endY));
     }
+}
+
+#container.game-over .ball {
+    animation-play-state: paused;
+}
+
+#container.game-over {
+    filter: blur(5px);
+    opacity: 0.75;
+}
+
+#title-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 36px;
+    width: 600px;
+    height: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+#title-screen h1 {
+    margin-bottom: 30px;
+}
+
+#title-screen button {
+    margin-top: 20px;
+    padding: 15px 30px;
+    font-size: 24px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 9;
+}
+
+#title-screen button:hover {
+    background-color: #cc0000;
+}
+
+#game-over-screen {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 36px;
+    width: 450px;
+    height: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 8;
+}
+
+#restart-button {
+    margin-top: 10px;
+    padding: 15px 30px;
+    font-size: 20px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 7;
+}
+
+#restart-button:hover {
+    background-color: #cc0000;
 }
