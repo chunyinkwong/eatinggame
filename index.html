@@ -11,12 +11,38 @@
         <h1>Eating Game</h1>
         <button id="play-button">Play Game</button>
         <button id="tutorial-button">Tutorial</button>
+        <button id="leaderboard-button">Leaderboard</button>
     </div>
     <div id="game-over-screen">
         <p>Game Over</p>
         <button id="restart-button">Restart</button>
+        <button id="return-title-button">Return to Title</button>
+    </div>
+    <div id="win-screen">
+        <p>You Win!</p>
+        <button id="restart-button-win">Restart</button>
+        <button id="return-title-button-win">Return to Title</button>
+    </div>
+    <div id="tutorial-screen">
+        <h2>Tutorial</h2>
+        <p>Use your mouse to move the player and avoid larger balls. Eat smaller balls to grow.</p>
+        <button id="close-tutorial-button">Close</button>
+    </div>
+    <div id="leaderboard-screen">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard-list"></ul>
+        <button id="return-title-button-leaderboard">Return to Title</button>
     </div>
     <div id="container"></div>
+    <div id="timer">Time: 0s</div>
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h2>Enter your name</h2>
+            <input type="text" id="name-input" placeholder="Your name">
+            <button id="submit-name-button">Submit</button>
+        </div>
+    </div>
     <script src="script.js"></script>
+    
 </body>
 </html>

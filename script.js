@@ -1,14 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('container');
     const gameOverScreen = document.getElementById('game-over-screen');
+    const winScreen = document.getElementById('win-screen');
+    const tutorialScreen = document.getElementById('tutorial-screen');
+    const leaderboardScreen = document.getElementById('leaderboard-screen');
     const restartButton = document.getElementById('restart-button');
+    const restartButtonWin = document.getElementById('restart-button-win');
+    const returnTitleButton = document.getElementById('return-title-button');
+    const returnTitleButtonWin = document.getElementById('return-title-button-win');
+    const returnTitleButtonLeaderboard = document.getElementById('return-title-button-leaderboard');
     const titleScreen = document.getElementById('title-screen');
     const playButton = document.getElementById('play-button');
     const tutorialButton = document.getElementById('tutorial-button');
+    const closeTutorialButton = document.getElementById('close-tutorial-button');
+    const timerDisplay = document.getElementById('timer');
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const leaderboardButton = document.getElementById('leaderboard-button');
+    const nameModal = document.getElementById('name-modal');
+    const nameInput = document.getElementById('name-input');
+    const submitNameButton = document.getElementById('submit-name-button');
     let gameOver = false;
     let gameActive = false;
     let ballInterval;
     let titleScreenBallInterval;
+    let timerInterval;
+    let timer = 0;
 
     // Create the player circle
     const player = document.createElement('div');
@@ -155,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameOverScreen.style.display = 'block';
             container.style.filter = 'blur(5px)';
             gameOver = true;
+            stopTimer();
 
             document.querySelectorAll('.ball').forEach(ball => ball.style.animationPlayState = 'paused');
         } else {
@@ -163,7 +180,77 @@ document.addEventListener('DOMContentLoaded', () => {
             player.style.height = `${newSize}px`;
             container.removeChild(ball);
             clearInterval(checkCollisionInterval);
+
+            if (newSize >= 250) {
+                winScreen.style.display = 'block';
+                container.style.filter = 'blur(5px)';
+                gameOver = true;
+                stopTimer();
+                promptForNameAndSaveScore(timer);
+            }
         }
+    }
+
+    function startTimer() {
+        timer = 0;
+        timerInterval = setInterval(() => {
+            timer++;
+            timerDisplay.textContent = `Time: ${timer}s`;
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function resetGame() {
+        container.classList.remove('game-over');
+        gameOverScreen.style.display = 'none';
+        winScreen.style.display = 'none';
+        titleScreen.style.display = 'flex';
+        container.style.filter = 'blur(5px)'; 
+        gameOver = false;
+        gameActive = false;
+        player.style.width = '10px';
+        player.style.height = '10px';
+        clearInterval(ballInterval);
+        stopTimer();
+        timerDisplay.textContent = 'Time: 0s';
+
+        document.querySelectorAll('.ball').forEach(ball => container.removeChild(ball));
+        titleScreenBallInterval = setInterval(createTitleScreenBall, 250);
+    }
+
+    function updateLeaderboard() {
+        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        leaderboardList.innerHTML = '';
+        leaderboard.forEach((entry, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${index + 1}. ${entry.name} - ${entry.score}s`;
+            leaderboardList.appendChild(li);
+        });
+    }
+
+    function saveScore(name, score) {
+        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        leaderboard.push({ name, score });
+        leaderboard.sort((a, b) => a.score - b.score); 
+        if (leaderboard.length > 10) leaderboard.pop();
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        updateLeaderboard();
+    }
+
+    function promptForNameAndSaveScore(score) {
+        nameModal.style.display = 'block';
+
+        submitNameButton.onclick = () => {
+            const name = nameInput.value.trim();
+            if (name) {
+                saveScore(name, score);
+                nameModal.style.display = 'none';
+                nameInput.value = '';
+            }
+        };
     }
 
     playButton.addEventListener('click', () => {
@@ -172,32 +259,56 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.filter = 'none'; 
         gameActive = true;
         ballInterval = setInterval(createBall, 250);
+        startTimer();
 
         // Remove all existing balls
         document.querySelectorAll('.ball').forEach(ball => container.removeChild(ball));
     });
 
     tutorialButton.addEventListener('click', () => {
-        alert('Use your mouse to move the player and avoid larger balls. Eat smaller balls to grow.');
+        tutorialScreen.style.display = 'block';
+    });
+
+    closeTutorialButton.addEventListener('click', () => {
+        tutorialScreen.style.display = 'none';
     });
 
     restartButton.addEventListener('click', () => {
-        container.classList.remove('game-over');
-        gameOverScreen.style.display = 'none';
-        titleScreen.style.display = 'flex';
-        container.style.filter = 'blur(5px)'; 
-        gameOver = false;
-        gameActive = false;
-        player.style.width = '10px';
-        player.style.height = '10px';
-        clearInterval(ballInterval);
+        resetGame();
+        playButton.click();
+    });
 
-        document.querySelectorAll('.ball').forEach(ball => container.removeChild(ball));
-        titleScreenBallInterval = setInterval(createTitleScreenBall, 250);
+    restartButtonWin.addEventListener('click', () => {
+        resetGame();
+        playButton.click();
+    });
+
+    returnTitleButton.addEventListener('click', resetGame);
+    returnTitleButtonWin.addEventListener('click', resetGame);
+    returnTitleButtonLeaderboard.addEventListener('click', resetGame);
+
+    leaderboardButton.addEventListener('click', () => {
+        leaderboardScreen.style.display = 'block';
+        titleScreen.style.display = 'none';
+        updateLeaderboard();
+    });
+
+    returnTitleButtonLeaderboard.addEventListener('click', () => {
+        leaderboardScreen.style.display = 'none';
+        titleScreen.style.display = 'flex';
     });
 
     // Start creating balls for the title screen
     container.style.filter = 'blur(5px)'; 
     titleScreenBallInterval = setInterval(createTitleScreenBall, 250);
+
+    // Initialize leaderboard on page load
+    updateLeaderboard();
+
+    window.onclick = (event) => {
+        if (event.target == nameModal) {
+            nameModal.style.display = 'none';
+        }
+    };
 });
-//
+// 
