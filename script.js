@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRandomBallSize(playerSize) {
-        if (playerSize <= 250) {
+        if (playerSize <= 20) {
             return Math.random() * 50 + 10;
         } else if (playerSize <= 50) {
             return Math.random() * 75 + 10;
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.removeChild(ball);
             clearInterval(checkCollisionInterval);
 
-            if (newSize >= 20) {
+            if (newSize >= 250) {
                 winScreen.style.display = 'block';
                 container.style.filter = 'blur(5px)'
                 clearInterval(checkCollisionInterval);
