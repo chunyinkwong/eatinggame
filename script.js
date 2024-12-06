@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRandomBallSize(playerSize) {
-        if (playerSize <= 20) {
+        if (playerSize <= 250) {
             return Math.random() * 50 + 10;
         } else if (playerSize <= 50) {
             return Math.random() * 75 + 10;
