@@ -181,11 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
             container.removeChild(ball);
             clearInterval(checkCollisionInterval);
 
-            if (newSize >= 250) {
+            if (newSize >= 20) {
                 winScreen.style.display = 'block';
-                container.style.filter = 'blur(5px)';
+                container.style.filter = 'blur(5px)'
+                clearInterval(checkCollisionInterval);
                 gameOver = true;
                 stopTimer();
+
+                document.querySelectorAll('.ball').forEach(ball => ball.style.animationPlayState = 'paused');
                 promptForNameAndSaveScore(timer);
             }
         }
